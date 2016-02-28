@@ -1,0 +1,26 @@
+{
+    "name": "trakt.tv-ondeck",
+    "version": "0.0.1",
+    "description": "Plugin for adding 'ondeck' to trakt.tv module",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/vankasteelj/trakt.tv-ondeck"
+    },
+    "keywords": [
+        "trakt.tv",
+        "trakt",
+        "tv",
+        "plugin",
+        "addon",
+        "ondeck"
+    ],
+    "contributors": {
+        "name": "vankasteelj"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/vankasteelj/trakt.tv-ondeck/issues"
+    },
+    "dependencies": {}
+}
