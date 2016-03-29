@@ -97,7 +97,7 @@ OnDeck.getAll = function () {
 };
 
 OnDeck.updateOne = function (input, slug) {
-    if (!input) throw new Error('Missing input, use .ondeck.get()');
+    if (!input) throw new Error('Missing input, use .ondeck.getAll()');
     if (!slug) throw new Error('Missing trakt slug');
 
     var timestamp, output = [];
@@ -116,6 +116,7 @@ OnDeck.updateOne = function (input, slug) {
                     show.show.ids.tvrage
                 ].indexOf(slug) !== -1) {
                     // get new next_episode
+                    Trakt._debug('Get new next_episode for', slug);
                     return Trakt.shows.progress.watched({
                         extended: 'full,images',
                         id: slug,
@@ -134,7 +135,7 @@ OnDeck.updateOne = function (input, slug) {
                 }
             }));
         } else {
-            console.log('no upd');
+            Trakt._debug('No update');
             output = input.shows;
         }
     }).then(function () {
