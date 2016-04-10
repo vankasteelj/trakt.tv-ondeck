@@ -1,5 +1,5 @@
 ### Trakt.tv OnDeck
-Extends https://github.com/vankasteelj/trakt.tv node module, in order to get the equalivalent of "on deck to watch"
+Extends https://github.com/vankasteelj/trakt.tv node module, in order to get the equivalent of "on deck to watch"
 
 NOTICE: requires trakt.tv module! Load this plugin directly through `trakt.tv` module.
 
