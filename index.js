@@ -49,8 +49,10 @@ OnDeck.getAll = function () {
             }
         }));
     }).then(function () {
+        Trakt._debug('Sync calendar for the last 30 days')
+    }).then(function () {
         return Promise.all(temp.map(function (show) {
-            if (show.show.aired_episodes > show.plays) {
+            if (show.show.aired_episodes !== show.plays) {
                 Trakt._debug('Get shows/id/progress/watched for: ' + show.show.title);
                 return Trakt.shows.progress.watched({
                     extended: 'full,images',
@@ -65,6 +67,8 @@ OnDeck.getAll = function () {
                         }); // store shows with next_episode in 'ondeck'
                     }
                 });
+            } else {
+                Trakt._debug('Ignoring: ' + show.show.title);
             }
         }));
     }).then(function () {
