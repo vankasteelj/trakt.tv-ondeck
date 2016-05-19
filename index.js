@@ -49,8 +49,6 @@ OnDeck.getAll = function () {
             }
         }));
     }).then(function () {
-        Trakt._debug('Sync calendar for the last 30 days')
-    }).then(function () {
         return Promise.all(temp.map(function (show) {
             if (show.show.aired_episodes !== show.plays) {
                 Trakt._debug('Get shows/id/progress/watched for: ' + show.show.title);
@@ -60,10 +58,11 @@ OnDeck.getAll = function () {
                     hidden: false,
                     specials: false
                 }).then(function (progress) {
-                    if (progress.next_episode && progress.aired > progress.completed) {
+                    if (progress.next_episode && progress.aired > progress.completed) {                    
                         ondeck.push({
                             show: show.show,
                             next_episode: progress.next_episode,
+                            unseen: progress.aired - progress.completed
                         }); // store shows with next_episode in 'ondeck'
                     }
                 });
@@ -88,7 +87,8 @@ OnDeck.getAll = function () {
             }).then(function (episode) {
                 ondeck.push({
                     show: show.show,
-                    next_episode: episode
+                    next_episode: episode,
+                    unseen: show.show.aired_episodes
                 }); // store formatted shows from watchlist in 'ondeck'
             });
         }));
@@ -130,7 +130,8 @@ OnDeck.updateOne = function (input, slug) {
                         if (progress.next_episode) {
                             output.push({
                                 show: input.shows[index].show,
-                                next_episode: progress.next_episode
+                                next_episode: progress.next_episode,
+                                unseen: input.shows[index].unseen - 1
                             });
                         }
                     });
