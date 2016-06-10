@@ -65,6 +65,8 @@ OnDeck.getAll = function () {
                             unseen: progress.aired - progress.completed
                         }); // store shows with next_episode in 'ondeck'
                     }
+                }).catch(function (err) {
+                    return {};
                 });
             } else {
                 Trakt._debug('Ignoring: ' + show.show.title);
@@ -90,6 +92,8 @@ OnDeck.getAll = function () {
                     next_episode: episode,
                     unseen: show.show.aired_episodes
                 }); // store formatted shows from watchlist in 'ondeck'
+            }).catch(function (err) {
+                return {};
             });
         }));
     }).then(function () {
@@ -134,6 +138,8 @@ OnDeck.updateOne = function (input, slug) {
                                 unseen: input.shows[index].unseen - 1
                             });
                         }
+                    }).catch(function (err) {
+                        return {};
                     });
                 } else {
                     output.push(show);
