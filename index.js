@@ -24,7 +24,7 @@ OnDeck.getAll = function () {
         Trakt._debug('Get sync/watched/shows');
         return Trakt.sync.watched({
             type:'shows',
-            extended:'full,images,noseasons'
+            extended:'full,noseasons'
         });
     }).then(function (watchedShows) {
         watched = watchedShows; // store sync/watched/shows in 'watched'
@@ -53,7 +53,7 @@ OnDeck.getAll = function () {
             if (show.show.aired_episodes !== show.plays) {
                 Trakt._debug('Get shows/id/progress/watched for: ' + show.show.title);
                 return Trakt.shows.progress.watched({
-                    extended: 'full,images',
+                    extended: 'full',
                     id: show.show.ids.slug,
                     hidden: false,
                     specials: false
@@ -75,14 +75,14 @@ OnDeck.getAll = function () {
     }).then(function () {
         Trakt._debug('Get watchlisted shows from sync/watchlist/shows');
         return Trakt.sync.watchlist.get({
-            extended: 'full,images',
+            extended: 'full',
             type:'shows'
         });
     }).then(function (watchlisted) {
         return Promise.all(watchlisted.map(function (show) {
             Trakt._debug('Get details of s01e01 for: ' + show.show.title);
             return Trakt.episodes.summary({
-                extended: 'full,images',
+                extended: 'full',
                 id: show.show.ids.slug,
                 season: 1,
                 episode: 1
@@ -126,7 +126,7 @@ OnDeck.updateOne = function (input, slug) {
                     // get new next_episode
                     Trakt._debug('Get new next_episode for', slug);
                     return Trakt.shows.progress.watched({
-                        extended: 'full,images',
+                        extended: 'full',
                         id: slug,
                         hidden: false,
                         specials: false
