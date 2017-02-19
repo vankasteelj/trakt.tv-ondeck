@@ -22,5 +22,7 @@
     "bugs": {
         "url": "https://github.com/vankasteelj/trakt.tv-ondeck/issues"
     },
-    "dependencies": {}
+    "dependencies": {
+        "trakt.tv": "^5.0.0"
+    }
 }

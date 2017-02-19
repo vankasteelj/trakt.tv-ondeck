@@ -14,7 +14,9 @@ var Trakt = require('trakt.tv');
 var trakt = new Trakt({
     client_id: '',
     client_secret: '',
-    plugins: ['ondeck']
+    plugins: {
+        ondeck: require('trakt.tv-ondeck')
+    }
 });
 ```
 
