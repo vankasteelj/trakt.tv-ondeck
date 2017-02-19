@@ -29,7 +29,7 @@ OnDeck.getAll = function () {
     }).then(function (watchedShows) {
         watched = watchedShows; // store sync/watched/shows in 'watched'
         Trakt._debug('Get hidden items from users/me/hidden/progress_watched');
-        return Trakt.users.hidden({
+        return Trakt.users.hidden.get({
             section: 'progress_watched',
             type: 'show',
             limit: 100
