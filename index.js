@@ -50,27 +50,23 @@ OnDeck.getAll = function () {
         }));
     }).then(function () {
         return Promise.all(temp.map(function (show) {
-            if (show.show.aired_episodes !== show.plays) {
-                Trakt._debug('Get shows/id/progress/watched for: ' + show.show.title);
-                return Trakt.shows.progress.watched({
-                    extended: 'full',
-                    id: show.show.ids.slug,
-                    hidden: false,
-                    specials: false
-                }).then(function (progress) {
-                    if (progress.next_episode && progress.aired > progress.completed) {                    
-                        ondeck.push({
-                            show: show.show,
-                            next_episode: progress.next_episode,
-                            unseen: progress.aired - progress.completed
-                        }); // store shows with next_episode in 'ondeck'
-                    }
-                }).catch(function (err) {
-                    return {};
-                });
-            } else {
-                Trakt._debug('Ignoring: ' + show.show.title);
-            }
+            Trakt._debug('Get shows/id/progress/watched for: ' + show.show.title);
+            return Trakt.shows.progress.watched({
+                extended: 'full',
+                id: show.show.ids.slug,
+                hidden: false,
+                specials: false
+            }).then(function (progress) {
+                if (progress.next_episode && progress.aired > progress.completed) {                    
+                    ondeck.push({
+                        show: show.show,
+                        next_episode: progress.next_episode,
+                        unseen: progress.aired - progress.completed
+                    }); // store shows with next_episode in 'ondeck'
+                }
+            }).catch(function (err) {
+                return {};
+            });
         }));
     }).then(function () {
         Trakt._debug('Get watchlisted shows from sync/watchlist/shows');
