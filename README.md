@@ -28,6 +28,7 @@ trakt.ondeck.getAll().then(function (results) {
     console.log(onDeckToWatch);
 });
 ```
+*Note: you can bypass the builtin `trakt.sync.watched({type:'shows'})` by passing the resulting array as an argument, i.e. `trakt.ondeck.getAll(watchedArray)`*
 
 4) To avoid calling getAll() everytime, you can use updateOne() after an episode was seen:
 ```js

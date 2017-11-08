@@ -14,18 +14,22 @@ function findLargest(arr) {
     return largest;
 }
 
-OnDeck.getAll = function () {
+OnDeck.getAll = function (watchedArray = []) {
     var timestamp, temp = [], ondeck = [], hidden = [], watched;
 
     return Trakt.sync.last_activities().then(function (lastActivities) {
         Trakt._debug('Get new timestamp from sync/last_activities');
         timestamp = findLargest([lastActivities.episodes.watched_at, lastActivities.seasons.watched_at, lastActivities.shows.watched_at]);
     }).then(function () {
-        Trakt._debug('Get sync/watched/shows');
-        return Trakt.sync.watched({
-            type:'shows',
-            extended:'full,noseasons'
-        });
+        if (watchedArray.length) {
+            return watchedArray;
+        } else {
+            Trakt._debug('Get sync/watched/shows');
+            return Trakt.sync.watched({
+                type:'shows',
+                extended:'full,noseasons'
+            });
+        }
     }).then(function (watchedShows) {
         watched = watchedShows; // store sync/watched/shows in 'watched'
         Trakt._debug('Get hidden items from users/me/hidden/progress_watched');
