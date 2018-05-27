@@ -87,11 +87,13 @@ OnDeck.getAll = function (watchedArray = []) {
                 season: 1,
                 episode: 1
             }).then(function (episode) {
-                ondeck.push({
-                    show: show.show,
-                    next_episode: episode,
-                    unseen: show.show.aired_episodes
-                }); // store formatted shows from watchlist in 'ondeck'
+                if (show.show.aired_episodes) { // some shows dont have aired episodes yet
+                    ondeck.push({
+                        show: show.show,
+                        next_episode: episode,
+                        unseen: show.show.aired_episodes
+                    }); // store formatted shows from watchlist in 'ondeck'
+                }
             }).catch(function (err) {
                 return {};
             });
