@@ -10,8 +10,8 @@ NOTICE: requires trakt.tv module! Load this plugin directly through `trakt.tv` m
 2) Load the plugin:
 
 ```js
-var Trakt = require('trakt.tv');
-var trakt = new Trakt({
+const Trakt = require('trakt.tv');
+let trakt = new Trakt({
     client_id: '',
     client_secret: '',
     plugins: {
@@ -22,7 +22,7 @@ var trakt = new Trakt({
 
 3) Log in with trakt.tv, then call "ondeck":
 ```js
-var onDeckToWatch;
+let onDeckToWatch = {};
 trakt.ondeck.getAll().then(function (results) {
     onDeckToWatch = results;
     console.log(onDeckToWatch);

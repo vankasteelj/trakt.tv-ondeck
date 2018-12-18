@@ -1,26 +1,26 @@
-var OnDeck = module.exports = {}; // Skeleton
-var Trakt; // the main API for trakt (npm: 'trakt.tv')
+let OnDeck = module.exports = {}; // Skeleton
+let Trakt = {}; // the main API for trakt (npm: 'trakt.tv')
 
 // Initialize the module
-OnDeck.init = function (trakt) {
+OnDeck.init = (trakt) => {
     Trakt = trakt;
 };
 
-function findLargest(arr) {
+const findLargest = (arr) => {
     var largest = arr[0];
     for (var i = 0; i < arr.length; i++) {
         if (largest < arr[i] ) largest = arr[i];
     }
     return largest;
-}
+};
 
-OnDeck.getAll = function (watchedArray = []) {
-    var timestamp, temp = [], ondeck = [], hidden = [], watched;
+OnDeck.getAll = (watchedArray = []) => {
+    let timestamp = null, temp = [], ondeck = [], hidden = [], watched = {};
 
-    return Trakt.sync.last_activities().then(function (lastActivities) {
+    return Trakt.sync.last_activities().then((lastActivities) => {
         Trakt._debug('Get new timestamp from sync/last_activities');
         timestamp = findLargest([lastActivities.episodes.watched_at, lastActivities.seasons.watched_at, lastActivities.shows.watched_at]);
-    }).then(function () {
+    }).then(() => {
         if (watchedArray.length) {
             return watchedArray;
         } else {
@@ -30,7 +30,7 @@ OnDeck.getAll = function (watchedArray = []) {
                 extended:'full,noseasons'
             });
         }
-    }).then(function (watchedShows) {
+    }).then((watchedShows) => {
         watched = watchedShows; // store sync/watched/shows in 'watched'
         Trakt._debug('Get hidden items from users/me/hidden/progress_watched');
         return Trakt.users.hidden.get({
@@ -38,29 +38,29 @@ OnDeck.getAll = function (watchedArray = []) {
             type: 'show',
             limit: 100
         });
-    }).then(function (hiddenItems) {
+    }).then((hiddenItems) => {
         Trakt._debug('List hidden items\' slugs in array');
-        return Promise.all(hiddenItems.map(function (item) {
+        return Promise.all(hiddenItems.map((item) => {
             hidden.push(item.show.ids.slug);
         }));
-    }).then(function () {
+    }).then(() => {
         Trakt._debug('Remove hidden items from watched shows');
-        return Promise.all(watched.map(function (show) {
+        return Promise.all(watched.map((show) => {
             if (hidden.indexOf(show.show.ids.slug) === -1) {
                 temp.push(show); // store non-hidden shows in 'temp'
             } else {
                 Trakt._debug('Remove hidden show: ' + show.show.title);
             }
         }));
-    }).then(function () {
-        return Promise.all(temp.map(function (show) {
+    }).then(() => {
+        return Promise.all(temp.map((show) => {
             Trakt._debug('Get shows/id/progress/watched for: ' + show.show.title);
             return Trakt.shows.progress.watched({
                 extended: 'full',
                 id: show.show.ids.slug,
                 hidden: false,
                 specials: false
-            }).then(function (progress) {
+            }).then((progress) => {
                 if (progress.next_episode && progress.aired > progress.completed) {                    
                     ondeck.push({
                         show: show.show,
@@ -68,25 +68,25 @@ OnDeck.getAll = function (watchedArray = []) {
                         unseen: progress.aired - progress.completed
                     }); // store shows with next_episode in 'ondeck'
                 }
-            }).catch(function (err) {
+            }).catch((err) => {
                 return {};
             });
         }));
-    }).then(function () {
+    }).then(() => {
         Trakt._debug('Get watchlisted shows from sync/watchlist/shows');
         return Trakt.sync.watchlist.get({
             extended: 'full',
             type:'shows'
         });
-    }).then(function (watchlisted) {
-        return Promise.all(watchlisted.map(function (show) {
+    }).then((watchlisted) => {
+        return Promise.all(watchlisted.map((show) => {
             Trakt._debug('Get details of s01e01 for: ' + show.show.title);
             return Trakt.episodes.summary({
                 extended: 'full',
                 id: show.show.ids.slug,
                 season: 1,
                 episode: 1
-            }).then(function (episode) {
+            }).then((episode) => {
                 if (show.show.aired_episodes) { // some shows dont have aired episodes yet
                     ondeck.push({
                         show: show.show,
@@ -94,11 +94,11 @@ OnDeck.getAll = function (watchedArray = []) {
                         unseen: show.show.aired_episodes
                     }); // store formatted shows from watchlist in 'ondeck'
                 }
-            }).catch(function (err) {
+            }).catch((err) => {
                 return {};
             });
         }));
-    }).then(function () {
+    }).then(() => {
         return {
             shows: ondeck,
             last_watched: timestamp
@@ -106,16 +106,16 @@ OnDeck.getAll = function (watchedArray = []) {
     });
 };
 
-OnDeck.updateOne = function (input, slug) {
+OnDeck.updateOne = (input, slug) => {
     if (!input) throw new Error('Missing input, use .ondeck.getAll()');
     if (!slug) throw new Error('Missing trakt slug');
 
-    var timestamp, output = [];
-    return Trakt.sync.last_activities().then(function (lastActivities) {
+    let timestamp = null, output = [];
+    return Trakt.sync.last_activities().then((lastActivities) => {
         timestamp = findLargest([lastActivities.episodes.watched_at, lastActivities.seasons.watched_at, lastActivities.shows.watched_at]);
         // if one of the watched_at is more recent than the stored one
         if (input.last_watched < timestamp) {
-            return Promise.all(input.shows.map(function (show, index) {
+            return Promise.all(input.shows.map((show, index) => {
                 // verify slug was indeed in input
                 if ([
                     show.show.ids.slug,
@@ -132,7 +132,7 @@ OnDeck.updateOne = function (input, slug) {
                         id: slug,
                         hidden: false,
                         specials: false
-                    }).then(function (progress) {
+                    }).then((progress) => {
                         if (progress.next_episode) {
                             output.push({
                                 show: input.shows[index].show,
@@ -140,7 +140,7 @@ OnDeck.updateOne = function (input, slug) {
                                 unseen: input.shows[index].unseen - 1
                             });
                         }
-                    }).catch(function (err) {
+                    }).catch((err) => {
                         return {};
                     });
                 } else {
@@ -151,7 +151,7 @@ OnDeck.updateOne = function (input, slug) {
             Trakt._debug('No update');
             output = input.shows;
         }
-    }).then(function () {
+    }).then(() => {
         return {
             shows: output,
             last_watched: timestamp
