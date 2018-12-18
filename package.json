@@ -1,6 +1,6 @@
 {
     "name": "trakt.tv-ondeck",
-    "version": "5.1.1",
+    "version": "7.0.0",
     "description": "Plugin for adding 'ondeck' to trakt.tv module",
     "main": "index.js",
     "repository": {
