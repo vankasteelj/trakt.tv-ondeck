@@ -133,7 +133,7 @@ OnDeck.updateOne = (input, slug) => {
                         hidden: false,
                         specials: false
                     }).then((progress) => {
-                        if (progress.next_episode) {
+                        if (progress.next_episode && (new Date(progress.next_episode.first_aired).getTime() < Date.now())) {
                             output.push({
                                 show: input.shows[index].show,
                                 next_episode: progress.next_episode,
