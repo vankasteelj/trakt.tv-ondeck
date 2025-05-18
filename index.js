@@ -39,7 +39,17 @@ OnDeck.getAll = (watchedArray = []) => {
             limit: 100
         });
     }).then((hiddenItems) => {
-        Trakt._debug('List hidden items\' slugs in array');
+        return Promise.all(hiddenItems.map((item) => {
+            hidden.push(item.show.ids.slug);
+        }));
+    }).then(() => {
+        Trakt._debug('Get hidden items from users/me/hidden/dropped');
+        return Trakt.users.hidden.get({
+            section: 'dropped',
+            type: 'show',
+            limit: 100
+        });
+    }).then((hiddenItems) => {
         return Promise.all(hiddenItems.map((item) => {
             hidden.push(item.show.ids.slug);
         }));
