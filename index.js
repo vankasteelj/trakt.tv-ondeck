@@ -15,7 +15,7 @@ const findLargest = (arr) => {
 };
 
 OnDeck.getAll = (watchedArray = []) => {
-    let timestamp = null, temp = [], ondeck = [], hidden = [], watched = {};
+    let timestamp = null, temp = [], ondeck = [], hidden = [], watched = {}, withMD = [];
 
     return Trakt.sync.last_activities().then((lastActivities) => {
         Trakt._debug('Get new timestamp from sync/last_activities');
@@ -109,8 +109,19 @@ OnDeck.getAll = (watchedArray = []) => {
             });
         }));
     }).then(() => {
+      return Promise.all(ondeck.map((show) => {
+        Trakt._debug('Get metadata for: ' + show.show.title);
+        return Trakt.shows.summary({
+          extended: 'full',
+          id: show.show.ids.slug
+        }).then((md) => {
+          show.show = md
+          withMD.push(show)
+        })
+      }))
+    }).then(() => {
         return {
-            shows: ondeck,
+            shows: withMD,
             last_watched: timestamp
         };
     });
