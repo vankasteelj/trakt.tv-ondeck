@@ -14,6 +14,29 @@ const findLargest = (arr) => {
     return largest;
 };
 
+let results = []
+const getWatched = (i) => {
+  const getPage = (n) => {
+    return Trakt.sync.watched({
+      type: 'shows',
+      limit: 250,
+      extended: 'full',
+      page: n
+    })
+  }
+
+  return new Promise(resolve => {
+    getPage(i).then(res => {
+      if (!res.length) {
+        resolve(results)
+      } else {
+        results = results.concat(res)
+        resolve(getWatched(i+1))
+      }
+    })
+  })
+}
+
 OnDeck.getAll = (watchedArray = []) => {
     let timestamp = null, temp = [], ondeck = [], hidden = [], watched = {}, withMD = [];
 
@@ -25,10 +48,7 @@ OnDeck.getAll = (watchedArray = []) => {
             return watchedArray;
         } else {
             Trakt._debug('Get sync/watched/shows');
-            return Trakt.sync.watched({
-                type:'shows',
-                extended:'full,noseasons'
-            });
+            return getWatched(1);
         }
     }).then((watchedShows) => {
         watched = watchedShows; // store sync/watched/shows in 'watched'
@@ -36,7 +56,7 @@ OnDeck.getAll = (watchedArray = []) => {
         return Trakt.users.hidden.get({
             section: 'progress_watched',
             type: 'show',
-            limit: 100
+            limit: 250
         });
     }).then((hiddenItems) => {
         return Promise.all(hiddenItems.map((item) => {
@@ -47,7 +67,7 @@ OnDeck.getAll = (watchedArray = []) => {
         return Trakt.users.hidden.get({
             section: 'dropped',
             type: 'show',
-            limit: 100
+            limit: 250
         });
     }).then((hiddenItems) => {
         return Promise.all(hiddenItems.map((item) => {
